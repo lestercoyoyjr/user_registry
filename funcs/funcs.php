@@ -49,15 +49,22 @@
 	// Here we verify user exists
 	function usuarioExiste($usuario)
 	{
+		// We are using 'global' because we already declared this
+		// var in "registro.php"
 		global $mysqli;
 		
+		// This 'prepare' works to avoid any SQL injection
 		$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE usuario = ? LIMIT 1");
+		// we send the parameter to receive in '$stmt' next to query "Where"
+		// 's' stands for "string". It could be "i" as integer
 		$stmt->bind_param("s", $usuario);
 		$stmt->execute();
 		$stmt->store_result();
 		$num = $stmt->num_rows;
 		$stmt->close();
-		
+
+		// We validate if the user already exists by the number of times
+		// the user repeats		
 		if ($num > 0){
 			return true;
 			} else {
@@ -65,6 +72,8 @@
 		}
 	}
 	
+	// 'emailExiste' has the same code than 'UsuarioExiste' we just change
+	// the parameters
 	function emailExiste($email)
 	{
 		global $mysqli;
@@ -83,12 +92,15 @@
 		}
 	}
 	
+	// this is to generate a token so it can receive it when 
+	// the user registers
 	function generateToken()
 	{
 		$gen = md5(uniqid(mt_rand(), false));	
 		return $gen;
 	}
 	
+	// to save with cipher the password with hast
 	function hashPassword($password) 
 	{
 		$hash = password_hash($password, PASSWORD_DEFAULT);
@@ -110,11 +122,15 @@
 		}
 	}
 	
+	// this is the main function for user registration
+	// and it inserts the data in the database
 	function registraUsuario($usuario, $pass_hash, $nombre, $email, $activo, $token, $tipo_usuario){
 		
 		global $mysqli;
 		
 		$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, nombre, correo, activacion, token, id_tipo) VALUES(?,?,?,?,?,?,?)");
+		
+		// 'ssssisi' = string + string + ... + integer + string + integer
 		$stmt->bind_param('ssssisi', $usuario, $pass_hash, $nombre, $email, $activo, $token, $tipo_usuario);
 		
 		if ($stmt->execute()){
@@ -133,7 +149,7 @@
 		$mail->SMTPAuth = true;
 		$mail->SMTPSecure = 'tipo de seguridad'; //Modificar
 		$mail->Host = 'dominio'; //Modificar
-		$mail->Port = puerto; //Modificar
+		$mail->Port = 'puerto'; //Modificar
 		
 		$mail->Username = 'correo emisor'; //Modificar
 		$mail->Password = 'password de correo emisor'; //Modificar

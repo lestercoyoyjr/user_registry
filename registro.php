@@ -34,14 +34,69 @@
 		// but from the db not from html form because the last one is
 		// very easy to modify
 		
-		//fields
+		// fields
 		if (isNull($nombre, $usuario, $password, $con_password, $email)){
 			$errors[] = "Debe llenar todos los campos";
 		}
 
-		//email
+		// if email is not valid, send the message
 		if(!isEmail($email)){
 			$errors[] = "Direccion de correo invalida";
+		}
+
+		// to validate the password
+		if(!validaPassword($password, $con_password)){
+			$errors[] = "las contrasenas no coinciden";
+		}
+
+		// Here we're going to use the functions to validate user and password
+		// in function
+
+		// to validate user
+		if(usuarioExiste($usuario)){
+			$errors[] = "El nombre de usuario ".$usuario." ya existe";
+		}
+		if(emailExiste($email)){
+			$errors[] = "El nombre de usuario ".$email." ya existe";
+		}
+
+		// to show errors
+		if(count($errors) == 0){
+			// if we don't have any errors, we proceed with this
+			
+			// we validate captcha
+			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha");
+
+			$arr = json_decode($response, TRUE);
+
+			// we're gonna check the data from google is correct
+			if($arr['success']){
+				// we cipher the password
+				// in funcs we found the function "hashPassword"
+				$pass_hash = hashPassword($password);
+				//generate token
+				$token = generateToken();
+
+				// user registry
+				// with function "registraUsuario"
+				$registro = registraUsuario($usuario, $pass_hash, $nombre, $email, $activo, $token, $tipo_usuario);
+
+				// if register ends succesfully
+				if($registro > 0){
+					// we're going to validate the registry with email
+					//subject
+					$url = 'http://'.$_SERVER["SERVER_NAME"].'/user_registry/activar.php?id='.$registro.'&val='.$token;
+					// body
+					$cuerpo = "Estimado $nombre: <br/><br/> Para completar el registro es indispensable que haba clic en el siguiente link <a href='$url'> Activar Cuenta </a>";
+
+					// we're gonna add the subject and body
+					$asunto = 'Activar Cuenta - Sistema de Usuarios';
+				} else {
+					$errors[] = "Error al Registrar";
+				}
+			} else {
+				$errors[] = "Error al comprobar el registro";
+			}
 		}
 	}
 	
