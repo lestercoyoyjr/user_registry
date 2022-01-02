@@ -84,13 +84,26 @@
 				// if register ends succesfully
 				if($registro > 0){
 					// we're going to validate the registry with email
+
 					//subject
 					$url = 'http://'.$_SERVER["SERVER_NAME"].'/user_registry/activar.php?id='.$registro.'&val='.$token;
-					// body
-					$cuerpo = "Estimado $nombre: <br/><br/> Para completar el registro es indispensable que haba clic en el siguiente link <a href='$url'> Activar Cuenta </a>";
-
 					// we're gonna add the subject and body
 					$asunto = 'Activar Cuenta - Sistema de Usuarios';
+					// body
+					$cuerpo = "Estimado $nombre: <br/><br/> Para completar el registro es indispensable que haga clic en el siguiente link <a href='$url'> Activar Cuenta </a>";
+
+					// Here we implement the function to send mails
+					if (enviarEmail($email, $nombre, $asunto, $cuerpo)){
+						// if the process ended successfully
+						echo "Para terminar el proceso de registro siga las instrucciones que le hemos enviado a la direccion de correo electronica: $email";
+
+						// link so it can initiate session
+						echo "<br><a href='index.php'>Iniciar sesion</a>";
+						// once it finishes we must exit this session page
+						exit;
+					} else {
+						$errors[] = "Error al enviar correo";
+					}
 				} else {
 					$errors[] = "Error al Registrar";
 				}
@@ -180,6 +193,7 @@
 								</div>
 							</div>
 						</form>
+						<!--To show the errors-->
 						<?php echo resultBlock($errors); ?>
 					</div>
 				</div>

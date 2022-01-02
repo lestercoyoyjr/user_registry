@@ -1,14 +1,25 @@
 <?php
 	
+	// here we add libraries to connect to DB
 	require 'funcs/conexion.php';
 	require 'funcs/funcs.php';
 	
+	// validate the data is being sent
+	if(isset($_GET["id"]) AND isset($_GET['val'])){
+		$idUsuario = $_GET['id'];
+		$token = $_GET['val'];
+
+		// Here we call a function to validate token
+		$mensaje = validaIdToken($idUsuario, $token);
+	}
+
 	$mensaje = null;
 	
 	//Aqui va el código PHP del Vídeo
 	
 ?>
 
+<!--HTML to start session-->
 <!doctype html>
 <html lang="es">
 	<head>

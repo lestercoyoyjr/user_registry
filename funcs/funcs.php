@@ -107,6 +107,7 @@
 		return $hash;
 	}
 	
+	// This is the function to receive errors
 	function resultBlock($errors){
 		if(count($errors) > 0)
 		{
@@ -140,10 +141,15 @@
 		}		
 	}
 	
+
+	// function to deliver a mail
 	function enviarEmail($email, $nombre, $asunto, $cuerpo){
 		
+		// library PHP Mailer to send mails
 		require_once 'PHPMailer/PHPMailerAutoload.php';
 		
+		// this is the data we send
+		// We have to modify it because it's private and personal
 		$mail = new PHPMailer();
 		$mail->isSMTP();
 		$mail->SMTPAuth = true;
@@ -151,9 +157,11 @@
 		$mail->Host = 'dominio'; //Modificar
 		$mail->Port = 'puerto'; //Modificar
 		
+		// who sends the mail
 		$mail->Username = 'correo emisor'; //Modificar
 		$mail->Password = 'password de correo emisor'; //Modificar
 		
+		// who receives the message
 		$mail->setFrom('correo emisor', 'nombre de correo emisor'); //Modificar
 		$mail->addAddress($email, $nombre);
 		
@@ -167,6 +175,7 @@
 		return false;
 	}
 	
+	// to validate token
 	function validaIdToken($id, $token){
 		global $mysqli;
 		
@@ -176,6 +185,11 @@
 		$stmt->store_result();
 		$rows = $stmt->num_rows;
 		
+		// Here we verify the activation be 0 because if it is
+		// equal to 1, it means someone else already activated
+		// this account, else we activate it with function
+		// "activarUsuario()".
+
 		if($rows > 0) {
 			$stmt->bind_result($activacion);
 			$stmt->fetch();
@@ -190,11 +204,15 @@
 				}
 			}
 			} else {
+			// this happens if it can find a register for 
+			// these data
 			$msg = 'No existe el registro para activar.';
 		}
 		return $msg;
 	}
 	
+	// function to activate user
+	// with an update to DB
 	function activarUsuario($id)
 	{
 		global $mysqli;
