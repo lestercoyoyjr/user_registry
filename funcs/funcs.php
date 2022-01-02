@@ -224,6 +224,8 @@
 		return $result;
 	}
 	
+	// This function validates user and password are correct
+	// when we logging into
 	function isNullLogin($usuario, $password){
 		if(strlen(trim($usuario)) < 1 || strlen(trim($password)) < 1)
 		{
@@ -235,10 +237,13 @@
 		}		
 	}
 	
+	// This is the function to login
 	function login($usuario, $password)
 	{
 		global $mysqli;
 		
+		// it selects a user or email from our DB
+		// in order to check they are already registered
 		$stmt = $mysqli->prepare("SELECT id, id_tipo, password FROM usuarios WHERE usuario = ? || correo = ? LIMIT 1");
 		$stmt->bind_param("ss", $usuario, $usuario);
 		$stmt->execute();
@@ -247,15 +252,23 @@
 		
 		if($rows > 0) {
 			
+			// Here we validate the passwords with the function 
+			// "isActivo" in order to check the account has already
+			// been activated
 			if(isActivo($usuario)){
 				
 				$stmt->bind_result($id, $id_tipo, $passwd);
 				$stmt->fetch();
 				
+				// here we're gonna make both passwords (as from user
+				// as from the password already stored in DB) match
+				// with a php internal function called "password_verify"
 				$validaPassw = password_verify($password, $passwd);
 				
+				// if they are correct, it will pass
 				if($validaPassw){
 					
+					// here we call the function 'lastSession'
 					lastSession($id);
 					$_SESSION['id_usuario'] = $id;
 					$_SESSION['tipo_usuario'] = $id_tipo;
@@ -274,6 +287,7 @@
 		return $errors;
 	}
 	
+	// this function  verifies the time and date when the user logins
 	function lastSession($id)
 	{
 		global $mysqli;
@@ -284,6 +298,7 @@
 		$stmt->close();
 	}
 	
+	// we verify this user or registry has been activated
 	function isActivo($usuario)
 	{
 		global $mysqli;

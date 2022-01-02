@@ -1,6 +1,27 @@
 <?php
 	
-	//Aqui va el código PHP del Vídeo
+	// This function works to let us know if we're going to 
+	// start session or take it from what we left
+	session_start();
+	require 'funcs/conexion.php';
+	require 'funcs/funcs.php';
+
+	// for errors
+	$errors = array();
+
+	// if the POST exists, then it will validate
+	if(!empty($_POST)){
+		$usuario = $mysqli->real_escape_string($_POST['usuario']);
+		$password = $mysqli->real_escape_string($_POST['password']);
+
+		// we're gonna check fields are not null
+		// with function 'isNullLogin' in funcs
+		if (isNullLogin($usuario, $password)){
+			$errors[] = "Debe llenar todos los campos";
+		}
+
+		$errors[] = login($usuario, $password);
+	}
 	
 ?>
 <!doctype html>
@@ -57,6 +78,7 @@
 								</div>
 							</div>    
 						</form>
+						<?php echo resultBlock($errors)?>
 					</div>                     
 				</div>  
 			</div>

@@ -1,5 +1,7 @@
 <?php
-	
-	//Aqui va el código PHP del Vídeo
-	
+	session_start();
+	// this is to close session
+	session_destroy();
+
+	header('location: index.php');
 ?>

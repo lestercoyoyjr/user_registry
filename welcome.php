@@ -1,5 +1,28 @@
 <?php
-	//Aqui va el código PHP del Vídeo
+	
+	// This function works to let us know if we're going to 
+	// start session or take it from what we left
+	session_start();
+	require 'funcs/conexion.php';
+	require 'funcs/funcs.php';
+
+	if(!isset($_SESSION["id_usuario"])){
+		// if the session var is null or empty
+		// it will redirect me to index.php
+		// in order to don't allow to the user to
+		// connect to an url without the user and password
+		// in case it know the url previously		
+		header("Location: index.php");
+	}
+
+	$idUsuario = $_SESSION["id_usuario"];
+
+	// this is to consult the user's name that is starting a session
+
+	$sql = "SELECT id, nombre FROM usuarios WHERE id='$idUsuario'";
+	$result = $mysqli->query($sql);
+
+	$row = $result->fetch_assoc();
 ?>
 
 <!doctype html>
@@ -39,13 +62,13 @@
 						<ul class='nav navbar-nav'>
 							<li class='active'><a href='welcome.php'>Inicio</a></li>			
 						</ul>
-						
+						<!-- This is to allow to access acording to the user type-->
 						<?php if($_SESSION['tipo_usuario']==1) { ?>
 							<ul class='nav navbar-nav'>
 								<li><a href='#'>Administrar Usuarios</a></li>
 							</ul>
 						<?php } ?>
-						
+						<!--This is to close session-->
 						<ul class='nav navbar-nav navbar-right'>
 							<li><a href='logout.php'>Cerrar Sesi&oacute;n</a></li>
 						</ul>
