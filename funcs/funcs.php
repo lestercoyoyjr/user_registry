@@ -319,6 +319,8 @@
 		}
 	}	
 	
+	// This function allows me to generate a token 
+	// to recovery a forgotten password using a token
 	function generaTokenPass($user_id)
 	{
 		global $mysqli;
@@ -333,6 +335,7 @@
 		return $token;
 	}
 	
+	// This function returs a select
 	function getValor($campo, $campoWhere, $valor)
 	{
 		global $mysqli;
@@ -375,6 +378,8 @@
 		}
 	}
 	
+	// This function verifies the id and token come from a valid
+	// register
 	function verificaTokenPass($user_id, $token){
 		
 		global $mysqli;

@@ -3,10 +3,27 @@
 	require 'funcs/conexion.php';
 	require 'funcs/funcs.php';
 	
+	// This has to be null so it can't save any data
 	$user_id = null;
 	$token = null;
 	
-	//Aqui va el código PHP del Vídeo
+	// Method GET to obtain the same info already sent
+	if(empty($_GET['user_id'])){
+		header('Location: index.php');
+	}
+
+	if(empty($_GET['token'])){
+		header('Location: index.php');
+	}
+
+	$user_id = $mysqli->real_escape_string($_GET['user_id']);
+	$token = $mysqli->real_escape_string($_GET['token']);
+
+	// In case verification fails
+	if(!verificaTokenPass($user_id, $token)){
+		echo 'No se pudo verificar los Datos';
+		exit;
+	}
 	
 ?>
 

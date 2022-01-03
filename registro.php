@@ -85,9 +85,12 @@
 				if($registro > 0){
 					// we're going to validate the registry with email
 
-					//subject
+					// url with name server
 					$url = 'http://'.$_SERVER["SERVER_NAME"].'/user_registry/activar.php?id='.$registro.'&val='.$token;
+					
 					// we're gonna add the subject and body
+
+					// subject
 					$asunto = 'Activar Cuenta - Sistema de Usuarios';
 					// body
 					$cuerpo = "Estimado $nombre: <br/><br/> Para completar el registro es indispensable que haga clic en el siguiente link <a href='$url'> Activar Cuenta </a>";

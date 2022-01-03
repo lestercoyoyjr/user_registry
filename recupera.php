@@ -1,8 +1,48 @@
 <?php
+	
+	require 'funcs/conexion.php';
+	require 'funcs/funcs.php';
 
-	
-	//Aqui va el código PHP del Vídeo
-	
+	// for errors
+	$errors = array();
+
+	// if the POST exists, then it will validate
+	if(!empty($_POST)){
+		$email = $mysqli->real_escape_string($_POST['email']);
+
+		// this function detects if a mail is valid or not
+		if(!isEmail($email)){
+			$errors[] = "Debe ingresar un correo electronico valido"; 
+		}
+		if(emailExiste($email)){
+			// we require some data from the user
+			$user_id = getValor('id', 'correo', $email);
+			$nombre = getValor('nombre', 'correo', $email);
+
+			// It is necessary to generate a token to validate
+			// the email the same way we did to validate an account
+			$token = generaTokenPass($user_id);
+
+			// url with name server
+			$url = 'http://'.$_SERVER["SERVER_NAME"].'/user_registry/cambia_pass.php?id='.$user_id.'&token='.$token;
+
+			// we're gonna add the subject and body
+			$asunto = 'Recuperar Password - Sistema de Usuarios';
+			// body
+			$cuerpo = "Hola $nombre: <br/><br/> Se ha solicitado un reinicio de contrase&ntilde;a. <br/><br/> Para restaurar la contrase&ntilde;a, visita la siguiente direcci%oacute;n <a href='$url'> Canbiar password </a>";
+
+			// this is to send email
+			if(enviarEmail($email, $nombre, $asunto, $cuerpo)){
+				echo "Hemos enviado un correo electronico a la direccion $email para restablecer tu password.<br/>";
+				echo "<a href='index.php'>Iniciar Sesion </a>";
+				exit;
+			} else {
+				$errors[] = "Error al enviar Email";
+			}
+		} else{
+			$errors[] = "No existe el correo electronico";
+		}
+	}
 ?>
 <!doctype html>
 <html lang="es">
@@ -52,6 +92,8 @@
 								</div>
 							</div>    
 						</form>
+						<!--To show the errors-->
+						<?php echo resultBlock($errors); ?>
 					</div>                     
 				</div>  
 			</div>
