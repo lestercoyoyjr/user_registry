@@ -150,6 +150,7 @@
 		
 		// this is the data we send
 		// We have to modify it because it's private and personal
+		// to find SMTP please ask for example "google smtp" to find it.
 		$mail = new PHPMailer();
 		$mail->isSMTP();
 		$mail->SMTPAuth = true;
